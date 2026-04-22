@@ -1,148 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nukrax.tr | Institutional XAUUSD Journal</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/3d-effects.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nukrax.tr</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  background:#0a0a0a;
+  color:#f5f5f5;
+  font-family:Arial;
+  margin:0;
+  padding:20px;
+}
+
+h1 {text-align:center;}
+
+.container {max-width:1000px;margin:auto;}
+
+.card {
+  background:#1a1a1a;
+  padding:15px;
+  margin:10px 0;
+  border-radius:10px;
+}
+
+input, select, button {
+  margin:5px;
+  padding:8px;
+  border:none;
+  border-radius:5px;
+}
+
+button {
+  background:#4da3ff;
+  color:white;
+  cursor:pointer;
+}
+
+table {
+  width:100%;
+  margin-top:10px;
+  border-collapse:collapse;
+}
+
+td, th {
+  border:1px solid #333;
+  padding:8px;
+  text-align:center;
+}
+
+canvas {
+  background:#111;
+  margin-top:20px;
+  border-radius:10px;
+}
+</style>
 </head>
+
 <body>
 
-    <nav class="sidebar">
-        <div class="logo">nukrax<span>.tr</span></div>
-        <ul class="nav-links">
-            <li class="active" onclick="showPage('dashboard')"><i>📊</i> Dashboard</li>
-            <li onclick="showPage('journal')"><i>📝</i> Journal</li>
-            <li onclick="showPage('analytics')"><i>📈</i> Analytics</li>
-            
-        </ul>
-        <div class="status-indicator">
-            <div class="dot"></div> XAUUSD LIVE
-        </div>
-    </nav>
+<div class="container">
+<h1>NUKRAX.TR</h1>
 
-    <main id="content-area">
-        <!-- Dashboard Section -->
-        <section id="dashboard" class="page active">
-            <header>
-                <h1>Command Center</h1>
-                <p>Welcome back, Operator. Precision is everything.</p>
-            </header>
+<div class="card">
+<h3>Add Trade</h3>
+<input type="datetime-local" id="date">
+<select id="type">
+<option>Buy</option>
+<option>Sell</option>
+</select>
+<input type="number" id="profit" placeholder="Profit ($)">
+<select id="result">
+<option>Win</option>
+<option>Loss</option>
+</select>
+<button onclick="addTrade()">Save</button>
+</div>
 
-            <div class="stats-grid">
-                <div class="stat-card" data-tilt>
-                    <h3>Win Rate</h3>
-                    <div class="value" id="stat-winrate">0%</div>
-                    <div class="progress-bar"><div id="winrate-fill"></div></div>
-                </div>
-                <div class="stat-card" data-tilt>
-                    <h3>Total Net P/L</h3>
-                    <div class="value" id="stat-profit">$0.00</div>
-                </div>
-                <div class="stat-card" data-tilt>
-                    <h3>Current Streak</h3>
-                    <div class="value" id="stat-streak">0</div>
-                </div>
-                <div class="stat-card" data-tilt>
-                    <h3>Total Trades</h3>
-                    <div class="value" id="stat-total">0</div>
-                </div>
-            </div>
+<div class="card">
+<h3>Dashboard</h3>
+<p id="stats"></p>
+</div>
 
-            <div class="recent-activity glass-panel">
-                <h2>Recent Performance Snapshot</h2>
-                <canvas id="miniEquityChart"></canvas>
-            </div>
-        </section>
+<div class="card">
+<h3>Trades</h3>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Type</th>
+<th>Result</th>
+<th>Profit</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
 
-        <!-- Journal Section -->
-        <section id="journal" class="page">
-            <div class="journal-header">
-                <h1>Trade Journal</h1>
-                <button class="btn-primary" onclick="toggleModal(true)">+ Log New Trade</button>
-            </div>
+<div class="card">
+<h3>Win Rate</h3>
+<canvas id="winChart"></canvas>
+</div>
 
-            <div class="table-container glass-panel">
-                <table id="trades-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Entry</th>
-                            <th>SL / TP</th>
-                            <th>Lot</th>
-                            <th>P/L ($)</th>
-                            <th>Result</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="trade-log-body">
-                        <!-- Trades injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+<div class="card">
+<h3>Equity Curve</h3>
+<canvas id="equityChart"></canvas>
+</div>
 
-        <!-- Analytics Section -->
-        <section id="analytics" class="page">
-            <h1>Advanced Analytics</h1>
-            <div class="analytics-grid">
-                <div class="chart-container glass-panel">
-                    <h3>Equity Curve (Growth)</h3>
-                    <canvas id="equityChart"></canvas>
-                </div>
-                <div class="chart-container glass-panel">
-                    <h3>Win Rate Evolution</h3>
-                    <canvas id="winRateChart"></canvas>
-                </div>
-            </div>
-        </section>
-    </main>
+</div>
 
-    <!-- Modal for Adding Trade -->
-    <div id="trade-modal" class="modal-overlay">
-        <div class="modal-content glass-panel">
-            <h2>Secure Trade Entry</h2>
-            <form id="trade-form">
-                <div class="form-row">
-                    <input type="date" id="t-date" required>
-                    <select id="t-type">
-                        <option value="Buy">BUY (Long)</option>
-                        <option value="Sell">SELL (Short)</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <input type="number" step="0.01" id="t-entry" placeholder="Entry Price" required>
-                    <input type="number" step="0.1" id="t-lot" placeholder="Lot Size" required>
-                </div>
-                <div class="form-row">
-                    <input type="number" step="0.01" id="t-sl" placeholder="Stop Loss">
-                    <input type="number" step="0.01" id="t-tp" placeholder="Take Profit">
-                </div>
-                <div class="form-row">
-                    <input type="number" step="0.01" id="t-profit" placeholder="Net Profit/Loss ($)" required>
-                    <select id="t-result">
-                        <option value="Win">Win</option>
-                        <option value="Loss">Loss</option>
-                        <option value="BE">Break Even</option>
-                    </select>
-                </div>
-                <textarea id="t-notes" placeholder="Psychological notes & reasoning..."></textarea>
-                <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="toggleModal(false)">Cancel</button>
-                    <button type="submit" class="btn-primary">Execute Log</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<script>
 
-    <script src="js/storage.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/app.js"></script>
+function getTrades() {
+  return JSON.parse(localStorage.getItem("trades")) || [];
+}
+
+function saveTrades(data) {
+  localStorage.setItem("trades", JSON.stringify(data));
+}
+
+function addTrade() {
+  let trades = getTrades();
+
+  trades.push({
+    date: date.value,
+    type: type.value,
+    profit: Number(profit.value),
+    result: result.value
+  });
+
+  saveTrades(trades);
+  location.reload();
+}
+
+function updateUI() {
+  let trades = getTrades();
+  let wins = 0;
+  let profit = 0;
+  let tableHTML = "";
+
+  trades.forEach((t, i) => {
+    if (t.result === "Win") wins++;
+    profit += t.profit;
+
+    tableHTML += `
+      <tr>
+        <td>${t.date}</td>
+        <td>${t.type}</td>
+        <td>${t.result}</td>
+        <td>${t.profit}</td>
+      </tr>
+    `;
+  });
+
+  let winRate = trades.length ? ((wins / trades.length) * 100).toFixed(2) : 0;
+
+  document.getElementById("stats").innerText =
+    `Trades: ${trades.length} | Win Rate: ${winRate}% | Profit: $${profit}`;
+
+  document.getElementById("table").innerHTML = tableHTML;
+
+  buildCharts(trades);
+}
+
+function buildCharts(trades) {
+  let winData = [];
+  let equity = [];
+  let wins = 0;
+  let sum = 0;
+
+  trades.forEach((t, i) => {
+    if (t.result === "Win") wins++;
+    winData.push((wins / (i + 1)) * 100);
+
+    sum += t.profit;
+    equity.push(sum);
+  });
+
+  new Chart(winChart, {
+    type: "line",
+    data: {
+      labels: trades.map((_, i) => i + 1),
+      datasets: [{
+        data: winData,
+        borderColor: "#4da3ff",
+        tension: 0.4
+      }]
+    }
+  });
+
+  new Chart(equityChart, {
+    type: "line",
+    data: {
+      labels: trades.map((_, i) => i + 1),
+      datasets: [{
+        data: equity,
+        borderColor: "lime",
+        tension: 0.4
+      }]
+    }
+  });
+}
+
+updateUI();
+
+</script>
+
 </body>
 </html>
