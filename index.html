@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nukrax.tr | Institutional XAUUSD Journal</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/3d-effects.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo">nukrax<span>.tr</span></div>
+        <ul class="nav-links">
+            <li class="active" onclick="showPage('dashboard')"><i>📊</i> Dashboard</li>
+            <li onclick="showPage('journal')"><i>📝</i> Journal</li>
+            <li onclick="showPage('analytics')"><i>📈</i> Analytics</li>
+            
+        </ul>
+        <div class="status-indicator">
+            <div class="dot"></div> XAUUSD LIVE
+        </div>
+    </nav>
+
+    <main id="content-area">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="page active">
+            <header>
+                <h1>Command Center</h1>
+                <p>Welcome back, Operator. Precision is everything.</p>
+            </header>
+
+            <div class="stats-grid">
+                <div class="stat-card" data-tilt>
+                    <h3>Win Rate</h3>
+                    <div class="value" id="stat-winrate">0%</div>
+                    <div class="progress-bar"><div id="winrate-fill"></div></div>
+                </div>
+                <div class="stat-card" data-tilt>
+                    <h3>Total Net P/L</h3>
+                    <div class="value" id="stat-profit">$0.00</div>
+                </div>
+                <div class="stat-card" data-tilt>
+                    <h3>Current Streak</h3>
+                    <div class="value" id="stat-streak">0</div>
+                </div>
+                <div class="stat-card" data-tilt>
+                    <h3>Total Trades</h3>
+                    <div class="value" id="stat-total">0</div>
+                </div>
+            </div>
+
+            <div class="recent-activity glass-panel">
+                <h2>Recent Performance Snapshot</h2>
+                <canvas id="miniEquityChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Journal Section -->
+        <section id="journal" class="page">
+            <div class="journal-header">
+                <h1>Trade Journal</h1>
+                <button class="btn-primary" onclick="toggleModal(true)">+ Log New Trade</button>
+            </div>
+
+            <div class="table-container glass-panel">
+                <table id="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Entry</th>
+                            <th>SL / TP</th>
+                            <th>Lot</th>
+                            <th>P/L ($)</th>
+                            <th>Result</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trade-log-body">
+                        <!-- Trades injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="page">
+            <h1>Advanced Analytics</h1>
+            <div class="analytics-grid">
+                <div class="chart-container glass-panel">
+                    <h3>Equity Curve (Growth)</h3>
+                    <canvas id="equityChart"></canvas>
+                </div>
+                <div class="chart-container glass-panel">
+                    <h3>Win Rate Evolution</h3>
+                    <canvas id="winRateChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Adding Trade -->
+    <div id="trade-modal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+            <h2>Secure Trade Entry</h2>
+            <form id="trade-form">
+                <div class="form-row">
+                    <input type="date" id="t-date" required>
+                    <select id="t-type">
+                        <option value="Buy">BUY (Long)</option>
+                        <option value="Sell">SELL (Short)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="number" step="0.01" id="t-entry" placeholder="Entry Price" required>
+                    <input type="number" step="0.1" id="t-lot" placeholder="Lot Size" required>
+                </div>
+                <div class="form-row">
+                    <input type="number" step="0.01" id="t-sl" placeholder="Stop Loss">
+                    <input type="number" step="0.01" id="t-tp" placeholder="Take Profit">
+                </div>
+                <div class="form-row">
+                    <input type="number" step="0.01" id="t-profit" placeholder="Net Profit/Loss ($)" required>
+                    <select id="t-result">
+                        <option value="Win">Win</option>
+                        <option value="Loss">Loss</option>
+                        <option value="BE">Break Even</option>
+                    </select>
+                </div>
+                <textarea id="t-notes" placeholder="Psychological notes & reasoning..."></textarea>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="toggleModal(false)">Cancel</button>
+                    <button type="submit" class="btn-primary">Execute Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
