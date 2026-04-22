@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>nukrax.tr</title>
+<title>NUKRAX.TR</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -38,6 +38,10 @@ button {
   background:#4da3ff;
   color:white;
   cursor:pointer;
+}
+
+button.delete {
+  background:#ff4d4d;
 }
 
 table {
@@ -94,6 +98,7 @@ canvas {
 <th>Type</th>
 <th>Result</th>
 <th>Profit</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody id="table"></tbody>
@@ -136,6 +141,16 @@ function addTrade() {
   location.reload();
 }
 
+function deleteTrade(index) {
+  let trades = getTrades();
+
+  if (confirm("Delete this trade?")) {
+    trades.splice(index, 1);
+    saveTrades(trades);
+    location.reload();
+  }
+}
+
 function updateUI() {
   let trades = getTrades();
   let wins = 0;
@@ -152,6 +167,7 @@ function updateUI() {
         <td>${t.type}</td>
         <td>${t.result}</td>
         <td>${t.profit}</td>
+        <td><button class="delete" onclick="deleteTrade(${i})">Delete</button></td>
       </tr>
     `;
   });
